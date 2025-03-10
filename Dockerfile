@@ -13,8 +13,10 @@ RUN go mod tidy
 # Compiler le programme Go
 RUN go build -o app
 
-# Exposer le port 3000
-EXPOSE 3000
+# Exposer le port 8080
+EXPOSE 8080 
 
 # Exécuter l'application
 CMD [ "./app" ]
+
+#test
