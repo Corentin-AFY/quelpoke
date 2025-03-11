@@ -5,7 +5,7 @@
     on:
       push:
         branches:
-          - master #On écoute tout les push sur la branche master
+          - main #On écoute tout les push sur la branche master
     
     #Précise sur quelle type de machine on fait tourner le workflows
     jobs:
