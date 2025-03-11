@@ -1,0 +1,39 @@
+---
+
+    name: Build et Push image Docker sur Gcloud Artifact Registry
+    
+    on:
+      push:
+        branches:
+          - master #On écoute tout les push sur la branche master
+    
+    #Précise sur quelle type de machine on fait tourner le workflows
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+    
+        - name: Authentification pour Gcloud
+          uses: google-github-actions/auth@v1 #On précise qu'on veut s'authentifier à Gcloud dans la machine
+          with:
+            credentials_json: ${{ secrets.GOOGLECREDENTIALSCORENTIN }} #On utilise les identifiants d'un service account créer au préalable (clé sous la forme .json) 
+    
+        - name: Installation des commandes Gcloud
+          uses: google-github-actions/setup-gcloud@v1
+          with:
+            project_id: ${{ secrets.GCLOUDPROJECTVARIABLE }} #On précise sur quelle projet on se met pour ce workflows
+    
+        - name: Authentification de gcloud sur la zone de notre projet Docker
+          run: | #On précise quelle region de docker on va utiliser pour stocker notre image docker
+            gcloud auth configure-docker europe-west9-docker.pkg.dev 
+    
+        - name: Build de l'image Docker
+          run: | #On build l'image docker
+            docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCLOUDPROJECTVARIABLE }}/student-corentin/quelpoke:latest .
+    
+        - name: Push de l'image Docker vers Gcloud
+          run: | #On la push vers le google artifact
+            docker push europe-west9-docker.pkg.dev/${{ secrets.GCLOUDPROJECTVARIABLE }}/student-corentin/quelpoke:latest
